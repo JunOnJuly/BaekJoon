@@ -1,26 +1,39 @@
-# 배낭문제 (냅색 알고리즘)
-def solution(N, K, objects):
-    # 정렬
-    objects = sorted(objects, key=lambda x: (x[0], x[1]))
-    # 2차원 DP
-    memo = [[0 for _ in range(N+1)] for __ in range(K+1)]
+def solution(a, b, n, m, data_list):
+    # 방문기록
+    visited = [1 for _ in range(n+1)]
+    visited[a] = 0
+    # 트리
+    tree = [[] for _ in range(n+1)]
+    for parent, child in data_list:
+        tree[parent].append(child)
+        tree[child].append(parent)
     
-    # 메모의 크기에 맞게
-    for i in range(N+1):
-        for j in range(K+1):
-            # [i-1] -> 인덱스 맞추려고
-            if i and j >= objects[i-1][0]:
-                # 현재 물체를 가방에 넣지 않았을 때 가치와
-                # 물체를 넣지 않았을 때 가방 안의 최대 가치 + 물체의 가치
-                # 둘 중 높은 가치로 결정
-                memo[j][i] = max(memo[j][i-1], max(memo[j-objects[i-1][0]][:i]) + objects[i-1][1])
-            # 현재 물체보다 가벼운경우는 이전 물체까지의 최대무게를 채워줌
-            elif i and j < objects[i-1][0]:
-                memo[j][i] = memo[j][i-1]
-    # 메모 마지막 리턴
-    return memo[-1][-1]
+    # DFS 쓸거임
+    stack = [a]
 
-    
-N, K = map(int, input().split())
-objects = [list(map(int, input().split())) for _ in range(N)]
-print(solution(N, K, objects))
+    while True:
+        # 경로가 없으면
+        if not stack:
+            return -1
+        # b 에 도달했으면
+        if stack[-1] == b:
+            return len(stack)-1
+        # 현재 노드
+        now = stack[-1]
+        for idx, node in enumerate(tree[now]):
+            # 방문한 적 없으면
+            if visited[node]:
+                stack.append(node)
+                visited[node] = 0
+                break
+            # 이동 가능 경로가 없으면
+            elif idx == len(tree[now])-1:
+                stack.pop()
+                break
+
+
+n = int(input())
+a, b = map(int, input().split())
+m = int(input())
+data = [list(map(int, input().split())) for _ in range(m)]
+print(solution(a, b, n, m, data))
