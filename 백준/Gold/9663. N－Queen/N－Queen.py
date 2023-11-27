@@ -1,26 +1,24 @@
-def is_promising(x):
+def is_empty(x):
     for i in range(x):
-        if row[x] == row[i] or abs(row[x] - row[i]) == abs(x - i):
+        if queen[x] == queen[i] or abs(queen[x] - queen[i]) == abs(x - i):
             return False
-    
     return True
 
 
 def n_queens(x):
-    global ans
+    global cnt
     if x == n:
-        ans += 1
+        cnt += 1
         return
     else:
         for i in range(n):
-            # [x, i]에 퀸을 놓겠다.
-            row[x] = i
-            if is_promising(x):
+            queen[x] = i
+            if is_empty(x):
                 n_queens(x+1)
                 
                 
 n = int(input())
-ans = 0
-row = [0] * n
+cnt = 0
+queen = [0] * n
 n_queens(0)
-print(ans)
+print(cnt)
