@@ -5,10 +5,10 @@ def solution(N, M, data_list):
     # 프림과 크루스칼 모두 해보자
     # 유니온 리스트
     union_list = list(range(N+1))
-    # 크루스칼 / 프림
+    # 크루스칼 / 프림 / N-1 셋 중 하나
     print(kruskal_or_prim_or_none('kruskal', N, M, union_list, data_list))
-    # print(kruskal_or_prim_or_none('prim', N, M, union_list, data_list))
-    # print(kruskal_or_prim_or_none('none', N, M, union_list, data_list))
+    print(kruskal_or_prim_or_none('prim', N, M, union_list, data_list))
+    print(kruskal_or_prim_or_none('none', N, M, union_list, data_list))
 
 
 # 크루스칼 프림 선택
@@ -77,19 +77,22 @@ def prim(N, M, union_list, data_list):
     queue = deque([])
     # 트리, tree[parent] = childs
     tree = [[] for _ in range(N+1)]
-    # 역시 데이터에 가중치가 없으므로 임의의 노드를 연결 후 순환 체크
-    # 임의의 시작 노드, 간선이 가장 적어야함
-    node_count = [0 for _ in range(N)]
+    # 트리 구성
     for parent, child in data_list:
-        node_count[parent-1] += 1
-        node_count[child-1] += 1
-    queue.append(node_count.index(min(node_count))+1)
+        tree[parent].append(child)
+        tree[child].append(parent)
+    # 자식의 수 리스트
+    len_tree = [len(node) for node in tree]
+    # 임의의 시작 노드, 간선이 가장 적어야함
+    queue.append(len_tree.index(min(len_tree))+1)
+    # 역시 데이터에 가중치가 없으므로 임의의 노드를 연결 후 순환 체크
+    min_tree = [[] for _ in range(N+1)]
     # 데이터를 순회하며 간선 연결
     while True:
         # 큐가 비면 끝
         if not queue:
             # 트리의 자식 수 합
-            return sum([len(node) for node in tree])
+            return sum([len(node) for node in min_tree])
         # 현재 노드
         now_node = queue.popleft()
         for parent, child in data_list:
@@ -98,18 +101,16 @@ def prim(N, M, union_list, data_list):
                 state, union_list = union_find(parent, child, union_list)
                 # 트리에 추가
                 if not state:
-                    tree[parent].append(child)
+                    min_tree[parent].append(child)
                     # 큐에 추가
                     queue.append(child)
-                    break
             elif child == now_node:
                 state, union_list = union_find(child, parent, union_list)
                 # 트리에 추가
                 if not state:
-                    tree[child].append(parent)
+                    min_tree[child].append(parent)
                     # 큐에 추가
                     queue.append(parent)
-                    break
 
 
 T = int(input())
