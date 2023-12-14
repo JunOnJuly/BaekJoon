@@ -3,7 +3,7 @@ import heapq
 
 
 def solution(V, E, data_list):
-    # kruskal, prim 둘 다 해보자
+    # kruskal
     weight_sum, tree, union_list = kruskal(V, E, data_list)
     print(weight_sum)
 
@@ -34,7 +34,7 @@ def kruskal(V, E, data_list):
         if state:
             tree[parent].append(child)
             weight_sum += weight
-        
+
 
 # union-find
 def find(union_list, node):
