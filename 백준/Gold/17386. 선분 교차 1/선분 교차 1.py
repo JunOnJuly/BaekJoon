@@ -12,7 +12,18 @@ def solution(x1, y1, x2, y2, x3, y3, x4, y4):
         for j in range(2):
             # 점
             point = line_list[1-i][2*j:2*j+2]
-            mul_ccw *= CCW(line, point)
+            ccw = CCW(line, point)
+            # ccw 가 0 이면 점이 선 위에 있으면 겹침, 아니면 안겹침
+            if ccw == 0:
+                # x, y 의 범위로 결정
+                if ((point[0] >= line[0] and point[0] <= line[3]) or (point[0] >= line[0] and point[0] <= line[3])) and \
+                    ((y1 >= y3 and y1 <= y4) or (y1 <= y3 and y1 >= y4)):
+                    print(1)
+                    return
+                else:
+                    print(0)
+                    return
+            mul_ccw *= ccw
         if mul_ccw > 0:
             print(0)
             return
