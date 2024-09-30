@@ -12,7 +12,7 @@ def bimatch(idx, visited, connected, hope_list):
     # 방문체크
     visited[idx] = True
 
-    # 열결될 수 있는 노드 체크
+    # 연결될 수 있는 노드 체크
     for node in hope_list[idx]:
         # 연결되지 않았거나
         # 연결된 노드와 연결된 노드가 다른 노드를 선택할 수 있으면
