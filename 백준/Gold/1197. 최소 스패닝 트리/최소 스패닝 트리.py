@@ -1,68 +1,62 @@
 import sys
-import heapq
+
+input = sys.stdin.readline
 
 
-def solution(V, E, data_list):
-    # kruskal
-    weight_sum, tree, union_list = kruskal(V, E, data_list)
-    print(weight_sum)
-
-
-# kruskal
-def kruskal(V, E, data_list):
-    # 트리, tree[i] = [i번째 노드의 자식들]
-    tree = [[] for _ in range(V+1)]
-    # 유니온 리스트
-    union_list = list(range(V+1))
-    # 큐
-    queue = []
-    # 데이터를 큐에 삽입
-    for parent, child, weight in data_list:
-        heapq.heappush(queue, [weight, parent, child])
-    # 가중치 합
-    weight_sum = 0
-    # 데이터를 순회하며 트리 완성
-    while True:
-        # 큐가 비면 끝
-        if not queue:
-            return weight_sum, tree, union_list
-        # 현재 노드, 부모노드, 자식노드
-        weight, parent, child = heapq.heappop(queue)
-        # 부모와 자식 노드가 순환이 아니면 union
-        state, union_list = union(union_list, parent, child)
-        # 병합 되었으면 트리에 추가
-        if state:
-            tree[parent].append(child)
-            weight_sum += weight
-
-
-# union-find
-def find(union_list, node):
-    # 자신의 루트가 자신이면 리턴
-    if union_list[node] == node:
-        return node
-    # 아니면 순서대로 루트를 바꿔가며 루트의 루트를 반환
-    else:
-        union_list[node] = find(union_list, union_list[node])
-    return union_list[node]
-
-
-def union(union_list, node_1, node_2):
-    # 루트 찾기
-    root_1 = find(union_list, node_1)
-    root_2 = find(union_list, node_2)
-    # 둘의 루트가 같으면
+# 크루스칼 알고리즘을 위한 Union-Find
+# Union
+def Union(root_list, node_1, node_2):
+    # 각 노드의 루트
+    root_1 = Find(root_list, node_1)
+    root_2 = Find(root_list, node_2)
+    # 각 루트가 같으면
     if root_1 == root_2:
-        # 순환이므로 리턴
-        return False, union_list
-    # 다르면
+        return False
+    # 다르면 루트가 작은쪽으로 병합
     else:
-        # 루트를 병합
-        union_list[root_2] = root_1
-        # 리턴
-        return True, union_list
+        if root_1 > root_2:
+            root_list[root_1] = root_list[root_2]
+        else:
+            root_list[root_2] = root_list[root_1]
+
+    return True
 
 
-V, E = map(int, sys.stdin.readline().strip().split())
-data_list = [list(map(int, sys.stdin.readline().strip().split())) for _ in range(E)]
-solution(V, E, data_list)
+# Find
+def Find(root_list, node):
+    # 자신의 루트가 자신이 아니면
+    if root_list[node] != node:
+        # 거슬러 올라가며 탐색
+        root_list[node] = Find(root_list, root_list[node])
+    
+    return root_list[node]
+
+
+def solution(V, E, edge_list):
+    # 가중치가 작은순으로 정렬
+    edge_list = sorted(edge_list, key=lambda x: x[-1])
+    # Union-Find 를 위한 루트 리스트
+    root_list = [i for i in range(V+1)]
+    # 최소 코스트
+    min_cost = 0
+    # 이은 엣지의 수
+    edge_cnt = 0
+    # 엣지 리스트 순회
+    for A, B, C in edge_list:
+        # 엣지의 수가 V-1 이면 끝
+        if edge_cnt >= V-1:
+            break
+
+        # A 노드와 B 노드가 다른 그룹이면 엣지를 추가
+        if Union(root_list, A, B):
+            min_cost += C
+            edge_cnt += 1
+
+    print(min_cost)
+
+
+# 입력
+V, E = map(int, input().strip().split())
+edge_list = [list(map(int, input().strip().split())) for _ in range(E)]
+
+solution(V, E, edge_list)
