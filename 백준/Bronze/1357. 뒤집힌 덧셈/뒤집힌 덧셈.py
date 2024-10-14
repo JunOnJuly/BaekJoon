@@ -1,0 +1,1 @@
+print(int(''.join(reversed(str(sum(list(map(lambda x:int(''.join(reversed(list(x)))), input().strip().split()))))))))
