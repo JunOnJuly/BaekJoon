@@ -1,0 +1,1 @@
+for o, i in zip([1, 1, 2, 2, 2, 8], list(map(int, input().split()))): print(o-i, end=' ')
