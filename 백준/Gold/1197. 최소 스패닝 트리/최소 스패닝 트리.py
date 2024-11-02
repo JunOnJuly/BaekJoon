@@ -1,62 +1,63 @@
 import sys
 
+sys.setrecursionlimit(100000)
 input = sys.stdin.readline
 
 
-# 크루스칼 알고리즘을 위한 Union-Find
+## Union-Find
 # Union
-def Union(root_list, node_1, node_2):
-    # 각 노드의 루트
-    root_1 = Find(root_list, node_1)
-    root_2 = Find(root_list, node_2)
-    # 각 루트가 같으면
-    if root_1 == root_2:
-        return False
-    # 다르면 루트가 작은쪽으로 병합
+def Union(node1, node2, group_list):
+    # 각 노드의 그룹
+    group1 = Find(node1, group_list)
+    group2 = Find(node2, group_list)
+    # 두 그룹이 같으면
+    if group1 == group2:
+        # 병합하지 않음
+        return False, group_list
+    
+    # 두 그룹이 다르면
+    # 작은 쪽으로 병합
+    if group1 > group2:
+        group_list[group1] = group2
+    
     else:
-        if root_1 > root_2:
-            root_list[root_1] = root_list[root_2]
-        else:
-            root_list[root_2] = root_list[root_1]
-
-    return True
+        group_list[group2] = group1
+    
+    return True, group_list
 
 
 # Find
-def Find(root_list, node):
-    # 자신의 루트가 자신이 아니면
-    if root_list[node] != node:
-        # 거슬러 올라가며 탐색
-        root_list[node] = Find(root_list, root_list[node])
+def Find(node, group_list):
+    # 그룹의 대표가 자신이 아니면
+    if group_list[node] != node:
+        # 재귀적으로 업데이트
+        group_list[node] = Find(group_list[node], group_list)
     
-    return root_list[node]
+    return group_list[node]
 
 
-def solution(V, E, edge_list):
-    # 가중치가 작은순으로 정렬
-    edge_list = sorted(edge_list, key=lambda x: x[-1])
-    # Union-Find 를 위한 루트 리스트
-    root_list = [i for i in range(V+1)]
-    # 최소 코스트
-    min_cost = 0
-    # 이은 엣지의 수
-    edge_cnt = 0
-    # 엣지 리스트 순회
-    for A, B, C in edge_list:
-        # 엣지의 수가 V-1 이면 끝
-        if edge_cnt >= V-1:
-            break
-
-        # A 노드와 B 노드가 다른 그룹이면 엣지를 추가
-        if Union(root_list, A, B):
-            min_cost += C
-            edge_cnt += 1
-
-    print(min_cost)
+def solution(V, E, edges):
+    # 크루스칼
+    # 엣지 정렬
+    edges = sorted(edges, key=lambda x: x[-1])
+    # 그룹 리스트
+    group_list = list(range(V+1))
+    # 가중치
+    cost = 0
+    # 엣지 순회
+    for A, B, C in edges:
+        # 병합
+        state, group_list = Union(A, B, group_list)
+        # 병합했으면
+        if state:
+            # 가중치 합
+            cost += C
+    
+    print(cost)
 
 
 # 입력
 V, E = map(int, input().strip().split())
-edge_list = [list(map(int, input().strip().split())) for _ in range(E)]
+edges = [list(map(int, input().strip().split())) for _ in range(E)]
 
-solution(V, E, edge_list)
+solution(V, E, edges)
