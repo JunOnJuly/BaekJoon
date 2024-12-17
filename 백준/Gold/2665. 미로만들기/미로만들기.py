@@ -16,6 +16,10 @@ def solution(n, rooms):
     while q:
         # 바꾼 수 / 인덱스
         changed, now_x, now_y = hq.heappop(q)
+        # 바꾼 수가 더 많으면 패스
+        if changed > visited[now_x][now_y]:
+            continue
+        
         # 이동 가능 위치 순회
         for x, y in move_dirs:
             # 다음 인덱스
