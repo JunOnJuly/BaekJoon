@@ -1,0 +1,1 @@
+print('Yes' if int(input())==sum([a*b for a,b in [map(int,input().split()) for _ in range(int(input()))]]) else 'No')
