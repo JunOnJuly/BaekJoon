@@ -1,0 +1,1 @@
+print(sum([1 for c in input() if c in ['a','e','i','o','u']]))
