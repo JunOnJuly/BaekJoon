@@ -1,0 +1,1 @@
+print(':'.join(map(lambda x:str(x).rjust(2, '0'), divmod(int(1440*(lambda x,y:y/x)(*map(int,input().strip().split()))), 60))))
