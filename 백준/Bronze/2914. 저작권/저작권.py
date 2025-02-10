@@ -1,0 +1,1 @@
+print((lambda x,y:x*(y-1)+1)(*map(int,input().split())))
