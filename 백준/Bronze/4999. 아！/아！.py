@@ -1,0 +1,1 @@
+print(''.join([c for c in 'ngoo'[len(input())>=len(input()):4:2]]))
